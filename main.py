@@ -27,14 +27,30 @@ def fetch_data(url,file_path):
             raise ValueError("No data found in the response!")
         
         #Write to CSV file
-        with open(file_path, mode=)
+        with open(file_path, mode="w", newline ="") as f:
+            writer = csv.writer(f)
+            header = ["timestamp", "Open", "High", "Low", "Close", "Volume"]
+            writer.writerow(header)
 
+            for line in results:
+                row = [
+                    line.get("t"),  # Timestamp
+                    line.get("o"),  # Open price
+                    line.get("h"),  # High price
+                    line.get("l"),  # Low price
+                    line.get("c"),  # Close price
+                    line.get("v"),  # Volume
+                ]
+            writer.writerow(row)
+
+        print("Completed")
+        
     except Exception as e:
         print(f"Unexpected error: {e}")
 
 
 def main():
-    fetch_data()
+    fetch_data(url,file_path)
 
 if __name__ == "__main__":
     main()
