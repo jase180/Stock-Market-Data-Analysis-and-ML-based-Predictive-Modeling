@@ -1,6 +1,6 @@
 import pandas as pd
-import numpy as np
 from ta import add_all_ta_features
+import os
 
 data_path = "data/spy_data.csv" #path of the csv file
 df = pd.read_csv(data_path) #read the csv into a df
@@ -20,7 +20,7 @@ df.set_index("timestamp", inplace = True) #Make datetime into the index of the d
 
 print(f"Index type: {type(df.index)}") 
 
-#RESAMPLING
+#RESAMPLING for 1 day
 df_daily = df.resample("1D").agg({
     "Open": "first",   # First price of the day
     "High": "max",     # Highest price of the day
@@ -29,8 +29,33 @@ df_daily = df.resample("1D").agg({
     "Volume": "sum"    # Total volume of the day
 })
 
-print(df.loc["2022-12-03"])
-
-
 print("Daily resampled data:")
 print(df_daily.head(10))
+
+#rename columns to lowercase so it works with TA
+df.rename(columns={
+    "Open": "open",
+    "High": "high",
+    "Low": "low",
+    "Close": "close",
+    "Volume": "volume"
+}, inplace=True)
+print("columns name check:",df.columns)
+
+#TA Calculations
+
+df = add_all_ta_features(
+    df,
+    open="open",
+    high="high",
+    low="low",
+    close="close",
+    volume="volume",
+    fillna=True  # Fill missing values in indicators
+)
+print("checking after TA add")
+print(df.head(10)) 
+
+print("Done and now write to csv...")
+output_path = "data/spy_data_cleaned.csv"
+df.to_csv(output_path)
