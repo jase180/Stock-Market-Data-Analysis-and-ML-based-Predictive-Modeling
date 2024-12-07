@@ -6,6 +6,7 @@ from sklearn.metrics import classification_report, confusion_matrix, ConfusionMa
 import seaborn as sns
 
 #Load data
+print("Loading data")
 data_path = "data/spy_data_cleaned.csv"
 df = pd.read_csv(data_path, encoding='latin1') #need to have the encoding or it will have some window error
 
@@ -41,6 +42,7 @@ X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
 #Rainforest here we goooo
+print("ML Here we go!")
 rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
 rf_model.fit(X_train_scaled, y_train)
 
