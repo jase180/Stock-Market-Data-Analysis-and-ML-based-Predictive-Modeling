@@ -4,6 +4,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 import seaborn as sns
+import matplotlib as plt
+import joblib
 
 #Load data
 print("Loading data")
@@ -17,7 +19,6 @@ df["target"] = (df["close"] > df["open"]).astype(int) # close is higher than ope
 df.dropna(inplace=True)
 
 #Features
-excluded_columns = ["timestamp","target"]
 features = [
     "momentum_rsi",
     "momentum_stoch_rsi",
@@ -43,7 +44,7 @@ X_test_scaled = scaler.transform(X_test)
 
 #Rainforest here we goooo
 print("ML Here we go!")
-rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model = RandomForestClassifier(n_estimators=10000, random_state=42)
 rf_model.fit(X_train_scaled, y_train)
 
 #Predictions
@@ -56,6 +57,17 @@ print("Classification Report:")
 print(classification_report(y_test, y_pred))
 
 #Visualization
-ConfusionMatrixDisplay.from_estimator(rf_model, X_test_scaled, y_test)
+print("Visualizing")
+ConfusionMatrixDisplay.from_estimator(rf_model, X_test_scaled, y_test) 
 report = classification_report(y_test, y_pred, output_dict=True)
 sns.heatmap(pd.DataFrame(report).iloc[:-1, :].T, annot=True)
+
+#Feature Importance visual
+importance = rf_model.feature_importances_
+plt.barh(features,importance)
+plt.xlabel('Importance')
+plt.ylabel('Features')
+plt.show()
+
+#Save the model
+joblib.dump(rf_model, 'model1')
