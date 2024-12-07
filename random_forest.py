@@ -8,3 +8,9 @@ from sklearn.metrics import classification_report, confusion_matrix
 data_path = "data/spy_data_cleaned.py"
 df = pd.read_csv(data_path)
 
+#Target creation
+df["target"] = (df["Close"] > df["Open"]).astype(int) # close is higher than open meaning profit
+
+# Drop rows with missing values
+df.dropna(inplace=True)
+
