@@ -4,7 +4,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 import seaborn as sns
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import joblib
 
 #Load data
@@ -44,8 +44,12 @@ X_test_scaled = scaler.transform(X_test)
 
 #Rainforest here we goooo
 print("ML Here we go!")
-rf_model = RandomForestClassifier(n_estimators=10000, random_state=42)
+rf_model = RandomForestClassifier(n_estimators=500, random_state=42)
 rf_model.fit(X_train_scaled, y_train)
+
+#Save the model
+print("Done and saving!")
+joblib.dump(rf_model, 'model1')
 
 #Predictions
 y_pred = rf_model.predict(X_test_scaled)
@@ -63,11 +67,9 @@ report = classification_report(y_test, y_pred, output_dict=True)
 sns.heatmap(pd.DataFrame(report).iloc[:-1, :].T, annot=True)
 
 #Feature Importance visual
+print("Importance visual")
 importance = rf_model.feature_importances_
 plt.barh(features,importance)
 plt.xlabel('Importance')
 plt.ylabel('Features')
 plt.show()
-
-#Save the model
-joblib.dump(rf_model, 'model1')
