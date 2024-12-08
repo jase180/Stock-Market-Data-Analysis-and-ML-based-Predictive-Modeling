@@ -49,7 +49,7 @@ rf_model.fit(X_train_scaled, y_train)
 
 #Save the model
 print("Done and saving!")
-joblib.dump(rf_model, 'model1')
+joblib.dump(rf_model, 'model1.pk1')
 
 #Predictions
 y_pred = rf_model.predict(X_test_scaled)
