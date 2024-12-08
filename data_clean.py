@@ -56,6 +56,17 @@ df = add_all_ta_features(
 print("checking after TA add")
 print(df.head(10)) 
 
+# extract premarket and first 30 minutes data
+df_premarket = df.between_time('04:00','10:00')
+
+#extract daily close
+df_close = df.between_time('16:00', '16:00')
+
+
+#Done and write to csv
 print("Done and now write to csv...")
 output_path = "data/spy_data_cleaned.csv"
 df.to_csv(output_path)
+
+df_premarket.to_csv("data/spy_data_cleaned_premarket.csv")
+df_close.to_csv("data/spy_data_cleaned_close.csv")
