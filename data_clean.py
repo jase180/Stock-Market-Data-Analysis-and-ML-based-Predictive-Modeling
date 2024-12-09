@@ -64,8 +64,8 @@ df_close = df.between_time('16:00', '16:00')
 
 #export to df
 print("To pickling the dfs")
-df_premarket.to_csv("data/spy_data_cleaned_premarket.pk1")
-df_close.to_csv("data/spy_data_cleaned_close.pk1")
+df_premarket.to_pickle("data/spy_data_cleaned_premarket.pk1")
+df_close.to_pickle("data/spy_data_cleaned_close.pk1")
 
 #Done and write to csv
 print("Done and now write to csv...")
