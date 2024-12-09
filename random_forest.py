@@ -15,19 +15,33 @@ data_path_target = "data/spy_data_cleaned_close.pk1"
 df_features = pd.read_pickle(data_path_features)
 df_target = pd.read_pickle(data_path_target)
 print("Data loaded")
+print(f"Shape after load features: {df_features.shape}")
+print(f"Shape after load target: {df_target.shape}")
 
 #Make sure dfs are aligned by timestamps
-print("checking alignment by timestamp:")
+print("Converting timestamps to dates for alignment")
+df_features.index = df_features.index.normalize()
+df_target.index = df_target.index.normalize()
+
+print("Aligning by date")
 df_features, df_target = df_features.align(df_target, join="inner", axis=0)
+
+print("check after alignment")
+print(f"Shape after load features: {df_features.shape}")
+print(f"Shape after load target: {df_target.shape}")
 
 #Target creation
 print("Creating target")
 df_features["target"] = (df_target["close"] > df_features["open"]).astype(int) # close is higher than open meaning profit
+print(f"Created target, checking df_features shape: {df_features.shape}")
 
 # Drop rows with missing values
+print("Dropping rows")
 df_features.dropna(inplace=True)
+print(f"Shape after drop: {df_features.shape}")
 
 #Features
+print("Loading features and creating X and Y")
 features = [
     "momentum_rsi",
     "momentum_stoch_rsi",
@@ -42,6 +56,7 @@ features = [
 ]
 X = df_features[features]
 y = df_features["target"]
+print(f"shapes: X: {X.shape}, y: {y.shape}")
 
 #Split Test-train data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
