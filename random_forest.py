@@ -7,16 +7,25 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import joblib
 
-#Load data
+#Load data  #CHANGE THE DATA PATH LOADING
 print("Loading data")
-data_path = "data/spy_data_cleaned.csv"
-df = pd.read_csv(data_path, encoding='latin1') #need to have the encoding or it will have some window error
+data_path_features = "data/spy_data_cleaned_premarket.pk1"
+data_path_target = "data/spy_data_cleaned_close.pk1"
+
+df_features = pd.read_pickle(data_path_features)
+df_target = pd.read_pickle(data_path_target)
+print("Data loaded")
+
+#Make sure dfs are aligned by timestamps
+print("checking alignment by timestamp:")
+df_features, df_target = df_features.align(df_target, join="inner", axis=0)
 
 #Target creation
-df["target"] = (df["close"] > df["open"]).astype(int) # close is higher than open meaning profit
+print("Creating target")
+df_features["target"] = (df_target["close"] > df_features["open"]).astype(int) # close is higher than open meaning profit
 
 # Drop rows with missing values
-df.dropna(inplace=True)
+df_features.dropna(inplace=True)
 
 #Features
 features = [
@@ -31,8 +40,8 @@ features = [
     "trend_sma_fast",
     "trend_sma_slow"
 ]
-X = df[features]
-y = df["target"]
+X = df_features[features]
+y = df_features["target"]
 
 #Split Test-train data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)

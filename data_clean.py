@@ -57,11 +57,15 @@ print("checking after TA add")
 print(df.head(10)) 
 
 # extract premarket and first 30 minutes data
-df_premarket = df.between_time('04:00','10:00')
+df_premarket = df.between_time('10:00','10:00')
 
 #extract daily close
 df_close = df.between_time('16:00', '16:00')
 
+#export to df
+print("To pickling the dfs")
+df_premarket.to_csv("data/spy_data_cleaned_premarket.pk1")
+df_close.to_csv("data/spy_data_cleaned_close.pk1")
 
 #Done and write to csv
 print("Done and now write to csv...")
