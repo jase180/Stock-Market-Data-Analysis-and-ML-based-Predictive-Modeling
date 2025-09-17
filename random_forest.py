@@ -68,7 +68,7 @@ X_test_scaled = scaler.transform(X_test)
 
 #Rainforest here we goooo
 print("ML Here we go!")
-rf_model = RandomForestClassifier(n_estimators=500, random_state=42)
+rf_model = RandomForestClassifier(n_estimators=10000, random_state=42)
 rf_model.fit(X_train_scaled, y_train)
 
 #Save the model
