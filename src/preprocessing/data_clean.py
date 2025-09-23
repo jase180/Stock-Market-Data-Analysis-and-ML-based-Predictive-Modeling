@@ -1,8 +1,16 @@
 import pandas as pd
 from ta import add_all_ta_features
 import os
+import sys
+from pathlib import Path
 
-data_path = "data/spy_data.csv" #path of the csv file
+# Add project root to path
+project_root = Path(__file__).parent.parent.parent
+sys.path.append(str(project_root))
+
+from config.settings import RAW_DATA_PATH, DATA_DIR
+
+data_path = RAW_DATA_PATH
 df = pd.read_csv(data_path) #read the csv into a df
 
 #CLEANING
@@ -64,13 +72,13 @@ df_close = df.between_time('16:00', '16:00')
 
 #export to df
 print("To pickling the dfs")
-df_premarket.to_pickle("data/spy_data_cleaned_premarket.pk1")
-df_close.to_pickle("data/spy_data_cleaned_close.pk1")
+df_premarket.to_pickle(DATA_DIR / "spy_data_cleaned_premarket.pk1")
+df_close.to_pickle(DATA_DIR / "spy_data_cleaned_close.pk1")
 
 #Done and write to csv
 print("Done and now write to csv...")
-output_path = "data/spy_data_cleaned.csv"
+output_path = DATA_DIR / "spy_data_cleaned.csv"
 df.to_csv(output_path)
 
-df_premarket.to_csv("data/spy_data_cleaned_premarket.csv")
-df_close.to_csv("data/spy_data_cleaned_close.csv")
+df_premarket.to_csv(DATA_DIR / "spy_data_cleaned_premarket.csv")
+df_close.to_csv(DATA_DIR / "spy_data_cleaned_close.csv")
