@@ -1,5 +1,14 @@
+# Environment variables
+.env
+
+# Data files
 data/spy_data_cleaned.csv
-model1.pk1
-tree
 spy_data_cleaned_close.csv
 spy_data_cleaned_premarket.csv
+
+# Model files
+model1.pk1
+*.pk1
+
+# Generated files
+tree
