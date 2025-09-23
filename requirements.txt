@@ -1,0 +1,9 @@
+pandas
+requests
+scikit-learn
+ta
+seaborn
+matplotlib
+joblib
+python-dotenv
+graphviz
