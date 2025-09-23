@@ -4,17 +4,30 @@ import csv
 import pandas as pd
 from datetime import datetime
 from calendar import monthrange
+from dotenv import load_dotenv
+import sys
+from pathlib import Path
+
+# Load environment variables
+load_dotenv()
+
+# Add project root to path
+project_root = Path(__file__).parent.parent.parent
+sys.path.append(str(project_root))
+
+from config.settings import POLYGON_API_KEY, BASE_URL, DATA_DIR
 
 # Polygon info
-api_key = "CP7pXlsPyynAOZbpAqB8OX98ANuOG4Os"
-url = "https://api.polygon.io/v2/aggs/ticker/SPY/range/1/minute/2024-11-02/2024-11-26?adjusted=true&sort=asc&limit=50000&apiKey=CP7pXlsPyynAOZbpAqB8OX98ANuOG4Os"
+api_key = POLYGON_API_KEY
+if not api_key:
+    raise ValueError("POLYGON_API_KEY not found in environment variables")
 
-data_folder = "data"
-file_name = "spy_data.csv"
-file_path = os.path.join(data_folder, file_name)
+url = f"{BASE_URL}/SPY/range/1/minute/2024-11-02/2024-11-26?adjusted=true&sort=asc&limit=50000&apiKey={api_key}"
+
+file_path = DATA_DIR / "spy_data.csv"
 
 # Make folder if it doesn't exist already
-os.makedirs(data_folder, exist_ok=True)
+os.makedirs(DATA_DIR, exist_ok=True)
 
 def fetch_data(url,file_path):
     try:
@@ -68,7 +81,7 @@ def generate_urls(start_date, end_date): #Returns list of URLs
         start_of_month = current_date.strftime("%Y-%m-%d")
         end_of_month = current_date.replace(day=last_day).strftime("%Y-%m-%d")
 
-        url = f"https://api.polygon.io/v2/aggs/ticker/SPY/range/1/minute/{start_of_month}/{end_of_month}?adjusted=true&sort=asc&limit=50000&apiKey=CP7pXlsPyynAOZbpAqB8OX98ANuOG4Os"
+        url = f"{BASE_URL}/SPY/range/1/minute/{start_of_month}/{end_of_month}?adjusted=true&sort=asc&limit=50000&apiKey={api_key}"
         out_urls.append(url)
 
         #update for next loop
