@@ -6,11 +6,26 @@ from sklearn.metrics import classification_report, confusion_matrix, ConfusionMa
 import seaborn as sns
 import matplotlib.pyplot as plt
 import joblib
+import sys
+from pathlib import Path
 
-#Load data  #CHANGE THE DATA PATH LOADING
+# Add project root to path
+project_root = Path(__file__).parent.parent.parent
+sys.path.append(str(project_root))
+
+from config.settings import (
+    PROCESSED_FEATURES_PATH,
+    PROCESSED_TARGET_PATH,
+    MODEL_PATH,
+    FEATURE_COLUMNS,
+    RANDOM_FOREST_PARAMS,
+    TEST_SIZE
+)
+
+#Load data
 print("Loading data")
-data_path_features = "data/spy_data_cleaned_premarket.pk1"
-data_path_target = "data/spy_data_cleaned_close.pk1"
+data_path_features = PROCESSED_FEATURES_PATH
+data_path_target = PROCESSED_TARGET_PATH
 
 df_features = pd.read_pickle(data_path_features)
 df_target = pd.read_pickle(data_path_target)
@@ -42,24 +57,12 @@ print(f"Shape after drop: {df_features.shape}")
 
 #Features
 print("Loading features and creating X and Y")
-features = [
-    "momentum_rsi",
-    "momentum_stoch_rsi",
-    "momentum_stoch_rsi_k",
-    "momentum_stoch_rsi_d",
-    "trend_macd",
-    "trend_macd_signal",
-    "trend_macd_diff",
-    "volume_sma_em",
-    "trend_sma_fast",
-    "trend_sma_slow"
-]
-X = df_features[features]
+X = df_features[FEATURE_COLUMNS]
 y = df_features["target"]
 print(f"shapes: X: {X.shape}, y: {y.shape}")
 
 #Split Test-train data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_SIZE, random_state=42)
 
 #Use Scaler
 scaler = MinMaxScaler()
@@ -68,12 +71,12 @@ X_test_scaled = scaler.transform(X_test)
 
 #Rainforest here we goooo
 print("ML Here we go!")
-rf_model = RandomForestClassifier(n_estimators=10000, random_state=42)
+rf_model = RandomForestClassifier(**RANDOM_FOREST_PARAMS)
 rf_model.fit(X_train_scaled, y_train)
 
 #Save the model
 print("Done and saving!")
-joblib.dump(rf_model, 'model1.pk1')
+joblib.dump(rf_model, MODEL_PATH)
 
 #Predictions
 y_pred = rf_model.predict(X_test_scaled)
@@ -93,7 +96,7 @@ sns.heatmap(pd.DataFrame(report).iloc[:-1, :].T, annot=True)
 #Feature Importance visual
 print("Importance visual")
 importance = rf_model.feature_importances_
-plt.barh(features,importance)
+plt.barh(FEATURE_COLUMNS, importance)
 plt.xlabel('Importance')
 plt.ylabel('Features')
 plt.show()
