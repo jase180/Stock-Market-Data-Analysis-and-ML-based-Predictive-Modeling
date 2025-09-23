@@ -1,11 +1,18 @@
 import requests
 import pandas as pd
 import time
+import os
+from dotenv import load_dotenv
 
+# Load environment variables
+load_dotenv()
 
 #Polygon API info for getting live info
-api_key = "CP7pXlsPyynAOZbpAqB8OX98ANuOG4Os"
-url = "https://api.polygon.io/v2/aggs/ticker/SPY/range/1/minute/2024-11-02/2024-11-26?adjusted=true&sort=asc&limit=50000&apiKey=CP7pXlsPyynAOZbpAqB8OX98ANuOG4Os"
+api_key = os.getenv("POLYGON_API_KEY")
+if not api_key:
+    raise ValueError("POLYGON_API_KEY not found in environment variables")
+
+url = f"https://api.polygon.io/v2/aggs/ticker/SPY/range/1/minute/2024-11-02/2024-11-26?adjusted=true&sort=asc&limit=50000&apiKey={api_key}"
 
 #portfolio (declare variables for the paper trading)
 
