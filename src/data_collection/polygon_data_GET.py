@@ -15,14 +15,16 @@ load_dotenv()
 project_root = Path(__file__).parent.parent.parent
 sys.path.append(str(project_root))
 
-from config.settings import POLYGON_API_KEY, BASE_URL, DATA_DIR
+from config.settings import POLYGON_API_KEY, BASE_URL, DATA_DIR, DATA_START_DATE, DATA_END_DATE
 
 # Polygon info
 api_key = POLYGON_API_KEY
 if not api_key:
     raise ValueError("POLYGON_API_KEY not found in environment variables")
 
-url = f"{BASE_URL}/SPY/range/1/minute/2024-11-02/2024-11-26?adjusted=true&sort=asc&limit=50000&apiKey={api_key}"
+# Build API URL using configurable date range
+# Note: Update DATA_START_DATE and DATA_END_DATE in config/settings.py for different periods
+url = f"{BASE_URL}/SPY/range/1/minute/{DATA_START_DATE}/{DATA_END_DATE}?adjusted=true&sort=asc&limit=50000&apiKey={api_key}"
 
 file_path = DATA_DIR / "spy_data.csv"
 
