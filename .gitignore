@@ -2,9 +2,7 @@
 .env
 
 # Data files
-data/spy_data_cleaned.csv
-spy_data_cleaned_close.csv
-spy_data_cleaned_premarket.csv
+data
 
 # Model files
 model1.pk1
