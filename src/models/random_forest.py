@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import joblib
 import sys
 from pathlib import Path
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
@@ -77,6 +79,22 @@ rf_model.fit(X_train_scaled, y_train)
 #Save the model
 print("Done and saving!")
 joblib.dump(rf_model, MODEL_PATH)
+
+# Export model to ONNX format for C# backtester integration
+print("Exporting model to ONNX format...")
+
+# Define input type: 10 features (technical indicators)
+initial_type = [('float_input', FloatTensorType([None, 10]))]
+
+# Convert the trained model to ONNX format
+onnx_model = convert_sklearn(rf_model, initial_types=initial_type)
+
+# Save ONNX model
+onnx_path = MODEL_PATH.parent / "random_forest_model.onnx"
+with open(onnx_path, "wb") as f:
+    f.write(onnx_model.SerializeToString())
+
+print(f"ONNX model saved: {onnx_path}")
 
 #Predictions
 y_pred = rf_model.predict(X_test_scaled)
