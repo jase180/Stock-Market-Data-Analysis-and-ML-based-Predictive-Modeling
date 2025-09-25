@@ -86,8 +86,23 @@ print("Exporting model to ONNX format...")
 # Define input type: 10 features (technical indicators)
 initial_type = [('float_input', FloatTensorType([None, 10]))]
 
-# Convert the trained model to ONNX format
-onnx_model = convert_sklearn(rf_model, initial_types=initial_type)
+try:
+    onnx_model = convert_sklearn(
+        rf_model,
+        initial_types=initial_type,
+        target_opset=11,  # Conservative opset
+        options={rf_model.__class__: {'zipmap': False}}  # Disable zipmap for due to C# backtester compatibility issue (causing performance issues) TOBEFIXED
+    )
+    print("ONNX conversion successful with conservative settings")
+except Exception as e:
+    print(f"Conservative conversion failed: {e}")
+    print("Trying fallback conversion...")
+    # Fallback: 
+    onnx_model = convert_sklearn(
+        rf_model,
+        initial_types=initial_type,
+        target_opset=9  # Use stable version for OPSET for fallback
+    )
 
 # Save ONNX model
 onnx_path = MODEL_PATH.parent / "random_forest_model.onnx"
